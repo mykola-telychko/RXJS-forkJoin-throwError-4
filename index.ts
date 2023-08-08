@@ -5,14 +5,18 @@ import { forkJoin, of, throwError } from 'rxjs';
   If any inner observables error, the error result
   will be emitted by catchError.
 */
-const example = forkJoin({
+
+const timeToError = 6000;
+
+const arrJoin = forkJoin({
   // emit 'Hello' immediately
   sourceOne: of('Hello'),
   // emit 'World' after 1 second
-  sourceTwo: of('World').pipe(delay(1000)),
+  sourceTwo: of('World'),
+  // sourceT: of('World').pipe(delay(timeToError)), // +++
   // throw error
-  sourceThree: throwError('This will error')
-}).pipe(catchError(error => of(error)));
+  sourceThree: throwError('This will error'),
+}).pipe(catchError((error) => of(error)));
 
 // output: 'This will Error'
-const subscribe = example.subscribe(val => console.log(val));
+const subscribe = arrJoin.subscribe((val) => console.log(val));
